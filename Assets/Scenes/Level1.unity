@@ -718,6 +718,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4710839942405805268, guid: 8f9a17b08ff63d24aa623d06fe8bf8d7, type: 3}
   m_PrefabInstance: {fileID: 4710839941896860770}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &886071592 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1355467050481964705, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
+  m_PrefabInstance: {fileID: 1355467049650962384}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &886071593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 886071592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b105711b407e7ba4780b2a541e41be61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: f887dcd05d9be1940b0557e1c0347d6b, type: 3}
+  _amountOfLines: 10
 --- !u!1 &1072016399
 GameObject:
   m_ObjectHideFlags: 0
@@ -2002,18 +2021,6 @@ PrefabInstance:
       value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.23
       objectReference: {fileID: 0}
@@ -2052,18 +2059,6 @@ PrefabInstance:
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8020559033645018093, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: _splitCount
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 8020559033645018093, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: goopyPrefab
-      value: 
-      objectReference: {fileID: 1355467050481964705, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-    - target: {fileID: 8020559033645018093, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-      propertyPath: _splitRadius
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
