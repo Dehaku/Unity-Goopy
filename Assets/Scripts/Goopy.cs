@@ -12,18 +12,19 @@ public class Goopy : MonoBehaviour
     [SerializeField] float _movementForce = 5;
     [SerializeField] float _jumpForce = 500;
     [SerializeField] int _splitCount = 6;
-    [SerializeField] float _splitRadius = 5f;
+    [SerializeField] float _splitRadius = 2f;
 
     void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        
+        FindObjectOfType<Cinemachine.CinemachineTargetGroup>().AddMember(gameObject.transform, 1f, 5f);
     }
 
     // Start is called before the first frame update
     void Start()
     {
         goopyPrefab = (GameObject)Resources.Load("Goopy");
+        AttachToAllOthers();
     }
 
     // Update is called once per frame
@@ -42,6 +43,13 @@ public class Goopy : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftControl))
             SplitIntoMiniChildren();
+
+        if (Input.GetKeyDown(KeyCode.M))
+            SetGoopySpringFrequency(0.001f);
+        if (Input.GetKeyDown(KeyCode.N))
+            SetGoopySpringFrequency(1f);
+        if (Input.GetKeyDown(KeyCode.X))
+            UpdateGoopySpringFromSerialize();
 
 
     }
@@ -74,8 +82,78 @@ public class Goopy : MonoBehaviour
             Vector3 pos = transform.position + new Vector3(x, y);
             // float angleDegrees = -angle * Mathf.Rad2Deg;
             // Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+
+            
+            var oldParent = gameObject.transform.parent;
+            Destroy(gameObject);
+
             GameObject childSpawn = Instantiate(goopyPrefab, pos, Quaternion.identity);
             childSpawn.gameObject.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            
+            
+            childSpawn.gameObject.transform.parent = oldParent;
+
+            //Cinemachine.CinemachineTargetGroup _targets = 
+            // FindObjectOfType<Cinemachine.CinemachineTargetGroup>().AddMember(childSpawn.transform,1f,1f);
+            // _targets.AddMember
+
+            
+
+        }
+    }
+
+
+    void SetGoopySpringFrequency(float frequency)
+    {
+        var _goops = FindObjectsOfType<Goopy>();
+        foreach (var goop in _goops)
+        {
+            var springJoint2DCollection = goop.gameObject.GetComponents<SpringJoint2D>();
+            foreach (var springJoint2D in springJoint2DCollection)
+            {
+                springJoint2D.frequency = frequency;
+            }
+
+        }
+    }
+
+    void UpdateGoopySpringFromSerialize()
+    {
+        var _goops = FindObjectsOfType<Goopy>();
+        var _goopyController = FindObjectOfType<GoopyController>();
+        foreach (var goop in _goops)
+        {
+            var springJoint2DCollection = goop.gameObject.GetComponents<SpringJoint2D>();
+            foreach (var springJoint2D in springJoint2DCollection)
+            {
+                springJoint2D.frequency = _goopyController.goopSpringFrequency;
+                // springJoint2D.distance = _goopyController.goopSpringDistance;
+                springJoint2D.dampingRatio = _goopyController.goopSpringDampeningRatio;
+            }
+
+        }
+    }
+
+    void AttachToAllOthers()
+    {
+        var _goops = FindObjectsOfType<Goopy>();
+
+        if (_goops.Length <= 1)
+            return;
+
+        foreach (var goop in _goops)
+        {
+            if (goop.gameObject == gameObject)
+                continue;
+            SpringJoint2D springJoint2D = gameObject.AddComponent<SpringJoint2D>();
+            springJoint2D.enableCollision = true;
+            // springJoint2D.gameObject = goop.gameObject;
+            springJoint2D.connectedBody = goop.gameObject.GetComponent<Rigidbody2D>();
+            // springJoint2D.dampingRatio = 1f;
+            springJoint2D.frequency = 1f;
+
+            // goop.gameObject.AddComponent<SpringJoint2D>();
+
         }
     }
 
