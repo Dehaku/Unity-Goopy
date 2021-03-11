@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GoopyController : MonoBehaviour
 {
+    [SerializeField] float _movementForce = 5;
     [SerializeField] public float goopJumpForce = 500;
     [SerializeField] public float goopShootForce = 500;
     [SerializeField] public float goopSpringDistance = 2;
@@ -12,11 +13,20 @@ public class GoopyController : MonoBehaviour
     [SerializeField] public float goopFriction = 1;
     [SerializeField] GameObject centerGoop;
     [SerializeField] GameObject _goopyStickyArrow;
+    [SerializeField] float _outerParachuteDrag = 1.5f;
+    [SerializeField] float _innerParachuteDrag = 3f;
+
+    public bool isInVent;
+    public float ventPower;
+    public Vector2 ventDirection;
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
     bool _pullYourselfTogether;
     bool _brokenApart;
+    bool _parachuteMode;
+
+    
     
 
 
@@ -91,16 +101,131 @@ public class GoopyController : MonoBehaviour
         }
     }
 
+    void SetGoopyFrequency(float frequency)
+    {
+        foreach (var goop in _goops)
+            goop.GetComponent<Goopy>().SetGoopySpringFrequency(frequency);
+    }
+
     void GoopyJump()
     {
         foreach (var goop in _goops)
             goop.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, goopJumpForce));
     }
 
+    void GoopyMove(Vector2 moveDirection)
+    {
+        foreach (var goop in _goops)
+            goop.GetComponent<Rigidbody2D>().AddForce(moveDirection);
+    }
+
+    void GoopyParachute(bool resetStuff = false)
+    {
+        // if (_parachuteMode)
+        {
+            var direction = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
+            direction.Normalize();
+            direction = (direction * 1) + new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+
+            var v2 = direction - new Vector2(_centerOfGoops.x,_centerOfGoops.y);
+            var velocityAngle = Mathf.Atan2(v2.y, v2.x);
+
+            foreach (var goop in _goops)
+            {
+
+                var goopv2 = goop.GetComponent<Rigidbody2D>().position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+                var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
+
+                if (goopAngle >= velocityAngle - (3.14 / 2) && goopAngle <= velocityAngle + (3.14 / 2))
+                {
+                    _parachuteMode = true;
+                    goop.GetComponent<SpriteRenderer>().color = Color.red;
+                    goop.GetComponent<Rigidbody2D>().drag = _outerParachuteDrag;
+                    SetGoopyFrequency(0.4f);
+                    if (goopAngle >= velocityAngle - (3.14 / 4) && goopAngle <= velocityAngle + (3.14 / 4))
+                        goop.GetComponent<Rigidbody2D>().drag = _innerParachuteDrag;
+                }
+                else
+                {
+                    goop.GetComponent<SpriteRenderer>().color = Color.white;
+                    goop.GetComponent<Rigidbody2D>().drag = 0f;
+                    SetGoopyFrequency(1f);
+                }
+
+                if(resetStuff)
+                {
+                    goop.GetComponent<SpriteRenderer>().color = Color.white;
+                    goop.GetComponent<Rigidbody2D>().drag = 0f;
+                    SetGoopyFrequency(1f);
+                    _parachuteMode = false;
+
+                }
+            }
+        }
+    }
+
+    void OnGUI()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        var v2 = mousePosition - _centerOfGoops;
+        var angle = Mathf.Atan2(v2.y, v2.x);
+
+        //Output the angle found above
+        GUI.Label(new Rect(25, 25, 200, 40), "Angle Between Objects" + angle);
+    }
+
+    void VentLogic()
+    {
+        if(_parachuteMode && isInVent)
+        {
+            foreach (var goop in _goops)
+            {
+                goop.AddForce(ventDirection * ventPower);
+            }
+        }
+    }
+
+
     // Update is called once per frame
     void Update()
     {
         CalcCenterOfGoops();
+
+        if (Input.GetKey(KeyCode.A))
+            GoopyMove(new Vector2(-_movementForce, 0));
+        if (Input.GetKey(KeyCode.D))
+            GoopyMove(new Vector2(_movementForce, 0));
+
+        if (Input.GetKey(KeyCode.S) && !_brokenApart)
+            SetGoopyFrequency(0.25f);
+        if (Input.GetKeyUp(KeyCode.S) && !_brokenApart)
+            SetGoopyFrequency(goopSpringFrequency);
+
+        if (Input.GetKey(KeyCode.W) && !_brokenApart)
+            SetGoopyFrequency(10f);
+        if (Input.GetKeyUp(KeyCode.W) && !_brokenApart)
+            SetGoopyFrequency(goopSpringFrequency);
+
+        if (Input.GetKey(KeyCode.F) && !_brokenApart)
+            GoopyParachute(); //_parachuteMode = !_parachuteMode;
+        if (Input.GetKeyUp(KeyCode.F) && !_brokenApart)
+            GoopyParachute(true);
+
+        VentLogic();
+        //else if (!_brokenApart)
+            
+        
+        
+        
+        
+        
+        
+        if (Input.GetKeyDown(KeyCode.F) && Input.GetKey(KeyCode.LeftShift) && !_brokenApart)
+            GoopyParachute(true); //_parachuteMode = !_parachuteMode;
+
+
+
 
         if (Input.GetKey(KeyCode.Q))
             BreakYourselfApart();
@@ -149,5 +274,7 @@ public class GoopyController : MonoBehaviour
 
 
     }
+
+    
 
 }

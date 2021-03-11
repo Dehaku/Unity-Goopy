@@ -5,10 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Level1.unity
     guid: ca05f617414084d42a7062f39094a601
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Level2.unity
     guid: 48edafeb36d745d4aa00463c908667f1
+  - enabled: 1
+    path: Assets/Scenes/GoopyTests.unity
+    guid: 799220626d5f73b4699df40d564e6a49
   m_configObjects: {}
