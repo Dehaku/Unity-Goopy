@@ -103,7 +103,7 @@ public class Goopy : MonoBehaviour
     }
 
 
-    void SetGoopySpringFrequency(float frequency)
+    public void SetGoopySpringFrequency(float frequency)
     {
         var _goops = FindObjectsOfType<Goopy>();
         foreach (var goop in _goops)

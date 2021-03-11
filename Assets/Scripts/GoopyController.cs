@@ -12,6 +12,7 @@ public class GoopyController : MonoBehaviour
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
+    bool _pullYourselfTogether;
 
     
     // Start is called before the first frame update
@@ -49,15 +50,56 @@ public class GoopyController : MonoBehaviour
         }
     }
 
+    float GetFarthestGoopDistance()
+    {
+        float FarthestDistance = 0;
+        foreach (var goop in _goops)
+        {
+            float distanceBetween = Vector2.Distance(goop.transform.position, _centerOfGoops);
+            if (distanceBetween > FarthestDistance)
+                FarthestDistance = distanceBetween;
+        }
+        Debug.Log(FarthestDistance);
+        return FarthestDistance;
+    }
+
+    void BreakYourselfApart()
+    {
+        foreach (var goop in _goops)
+            goop.GetComponent<Goopy>().SetGoopySpringFrequency(0.001f);
+    }
+
+    void PullYourselfTogether()
+    {
+        // if (_pullYourselfTogether)
+        {
+            GravityGoops();
+
+            if (GetFarthestGoopDistance() <= 1)
+            {
+                foreach (var goop in _goops)
+                    goop.GetComponent<Goopy>().SetGoopySpringFrequency(1f);
+                _pullYourselfTogether = false;
+            }
+
+
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         CalcCenterOfGoops();
 
         if (Input.GetKey(KeyCode.Q))
-            GravityGoops();
+            BreakYourselfApart();        // GravityGoops();
+        if (Input.GetKey(KeyCode.E))
+            PullYourselfTogether();    // _pullYourselfTogether = true;
 
-        if(_goops.Length > 0)
+
+
+
+        if (_goops.Length > 0)
         {
             centerGoop.transform.position = _centerOfGoops;
         }
