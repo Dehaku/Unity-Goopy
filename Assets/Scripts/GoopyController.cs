@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GoopyController : MonoBehaviour
 {
+    [SerializeField] public float goopJumpForce = 500;
     [SerializeField] public float goopSpringDistance = 2;
     [SerializeField] public float goopSpringDampeningRatio = 0;
     [SerializeField] public float goopSpringFrequency = 1;
@@ -13,6 +14,7 @@ public class GoopyController : MonoBehaviour
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
     bool _pullYourselfTogether;
+    bool _brokenApart;
 
     
     // Start is called before the first frame update
@@ -59,19 +61,20 @@ public class GoopyController : MonoBehaviour
             if (distanceBetween > FarthestDistance)
                 FarthestDistance = distanceBetween;
         }
-        Debug.Log(FarthestDistance);
         return FarthestDistance;
     }
 
     void BreakYourselfApart()
     {
+        _brokenApart = true;
         foreach (var goop in _goops)
             goop.GetComponent<Goopy>().SetGoopySpringFrequency(0.001f);
     }
 
-    void PullYourselfTogether()
+    void PullYourselfTogether(bool autoOverride = false)
     {
-        // if (_pullYourselfTogether)
+        
+        if (_pullYourselfTogether || autoOverride)
         {
             GravityGoops();
 
@@ -80,10 +83,15 @@ public class GoopyController : MonoBehaviour
                 foreach (var goop in _goops)
                     goop.GetComponent<Goopy>().SetGoopySpringFrequency(1f);
                 _pullYourselfTogether = false;
+                _brokenApart = false;
             }
-
-
         }
+    }
+
+    void GoopyJump()
+    {
+        foreach (var goop in _goops)
+            goop.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, goopJumpForce));
     }
 
     // Update is called once per frame
@@ -92,10 +100,17 @@ public class GoopyController : MonoBehaviour
         CalcCenterOfGoops();
 
         if (Input.GetKey(KeyCode.Q))
-            BreakYourselfApart();        // GravityGoops();
+            BreakYourselfApart();
         if (Input.GetKey(KeyCode.E))
-            PullYourselfTogether();    // _pullYourselfTogether = true;
+            PullYourselfTogether(true);    // Overrides need for the bool, allow precise control of pulling forces.
+        if (Input.GetKey(KeyCode.R))       // Automatically pull yourself together.
+            _pullYourselfTogether = true;
+        PullYourselfTogether();
 
+        if (Input.GetKeyDown(KeyCode.Space) && !_brokenApart)
+            GoopyJump();
+        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKeyDown(KeyCode.LeftShift)) 
+            GoopyJump(); // For debug/display purposes while settings are adjusted.
 
 
 
