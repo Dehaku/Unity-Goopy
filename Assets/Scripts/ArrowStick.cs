@@ -5,6 +5,7 @@ using UnityEngine;
 public class ArrowStick : MonoBehaviour
 {
     Rigidbody2D _rigidbody2D;
+    bool hasStuck;
 
     // Start is called before the first frame update
     void Start()
@@ -22,11 +23,32 @@ public class ArrowStick : MonoBehaviour
     {
         // _rigidbody2D.AddForce(new Vector2(0, 1000));
 
+        if (hasStuck)
+            return;
+
         _rigidbody2D.isKinematic = true;
-        _rigidbody2D.velocity = new Vector2();
-        // _rigidbody2D.rotation = 0;
+        _rigidbody2D.velocity = new Vector2(0,0);
         _rigidbody2D.freezeRotation = true;
 
         _rigidbody2D.gameObject.transform.parent = collision.gameObject.transform;
+        
+        hasStuck = true;
     }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // _rigidbody2D.AddForce(new Vector2(0, 1000));
+
+        if (hasStuck)
+            return;
+
+        _rigidbody2D.isKinematic = true;
+        _rigidbody2D.velocity = new Vector2(0, 0);
+        _rigidbody2D.freezeRotation = true;
+
+        _rigidbody2D.gameObject.transform.parent = collision.gameObject.transform;
+
+        hasStuck = true;
+    }
+
 }

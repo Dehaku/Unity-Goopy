@@ -5,18 +5,21 @@ using UnityEngine;
 public class GoopyController : MonoBehaviour
 {
     [SerializeField] public float goopJumpForce = 500;
+    [SerializeField] public float goopShootForce = 500;
     [SerializeField] public float goopSpringDistance = 2;
     [SerializeField] public float goopSpringDampeningRatio = 0;
     [SerializeField] public float goopSpringFrequency = 1;
     [SerializeField] public float goopFriction = 1;
     [SerializeField] GameObject centerGoop;
+    [SerializeField] GameObject _goopyStickyArrow;
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
     bool _pullYourselfTogether;
     bool _brokenApart;
-
     
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -109,15 +112,42 @@ public class GoopyController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && !_brokenApart)
             GoopyJump();
-        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKeyDown(KeyCode.LeftShift)) 
+        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift)) 
             GoopyJump(); // For debug/display purposes while settings are adjusted.
 
+        if (Input.GetMouseButtonDown(0))
+            FireGoopyStickyArrow();
+        
 
 
         if (_goops.Length > 0)
         {
             centerGoop.transform.position = _centerOfGoops;
         }
+    }
+
+    void OnMouseDown()
+    {
+        FireGoopyStickyArrow();
+    }
+
+    void FireGoopyStickyArrow()
+    {
+        Debug.Log("splew");
+
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = mousePosition - _centerOfGoops;
+        direction.Normalize();
+        Vector2 shootAngle = new Vector2(_centerOfGoops.x, _centerOfGoops.y) + (direction * 2);
+
+        GameObject childSpawn = Instantiate(_goopyStickyArrow, new Vector3(shootAngle.x,
+                    shootAngle.y),
+                    Quaternion.identity);
+        childSpawn.transform.up = direction;
+
+        childSpawn.GetComponent<Rigidbody2D>().AddForce(direction * goopShootForce);
+
+
     }
 
 }
