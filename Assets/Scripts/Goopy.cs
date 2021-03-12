@@ -29,10 +29,12 @@ public class Goopy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if (Input.GetKey(KeyCode.LeftArrow))
             _rigidbody2D.AddForce(new Vector2(-_movementForce, 0));
         if (Input.GetKey(KeyCode.RightArrow))
             _rigidbody2D.AddForce(new Vector2(_movementForce, 0));
+        */
         /*
         if (Input.GetKeyDown(KeyCode.Space) && 
             !Input.GetKey(KeyCode.LeftShift) &&
@@ -101,13 +103,34 @@ public class Goopy : MonoBehaviour
         if (goopy != null)
             return;
 
+        float stickyBreakforce = gameObject.transform.parent.GetComponent<GoopyController>().stickyBreakForce;
+        float stickyFrequency = gameObject.transform.parent.GetComponent<GoopyController>().stickyFrequency;
+        float stickyDampening = gameObject.transform.parent.GetComponent<GoopyController>().stickyDampening;
+
+        var springs = gameObject.GetComponents<SpringJoint2D>();
+        bool alreadySticky = false;
+        foreach (var spring in springs)
+        {
+            if (spring.breakForce == stickyBreakforce)
+            {
+                alreadySticky = true;
+                break;
+            }
+            
+        }
+        if (alreadySticky)
+            return;
+
         SpringJoint2D springJoint2D = gameObject.AddComponent<SpringJoint2D>();
         springJoint2D.enableCollision = true;
         springJoint2D.connectedBody = collision.collider.gameObject.GetComponent<Rigidbody2D>();
         springJoint2D.frequency = 1f;
-        springJoint2D.breakForce = gameObject.transform.parent.GetComponent<GoopyController>().stickyBreakForce;
+        springJoint2D.breakForce = stickyBreakforce;
+        springJoint2D.frequency = stickyFrequency;
+        springJoint2D.dampingRatio = stickyDampening;
         springJoint2D.connectedAnchor = collision.contacts[0].point;
         springJoint2D.autoConfigureConnectedAnchor = true;
+        // springJoint2D.
     }
 
 

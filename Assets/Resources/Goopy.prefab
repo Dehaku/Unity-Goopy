@@ -94,7 +94,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1355467050481964705}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 70d0f91499631e546855b4a56b9cf686, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -136,6 +136,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goopyPrefab: {fileID: 1355467050481964705}
   _movementForce: 5
-  _jumpForce: 500
   _splitCount: 12
   _splitRadius: 2

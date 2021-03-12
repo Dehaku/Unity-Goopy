@@ -43,8 +43,8 @@ public class ArrowStick : MonoBehaviour
             return;
 
         _rigidbody2D.isKinematic = true;
-        _rigidbody2D.velocity = new Vector2(0, 0);
-        _rigidbody2D.freezeRotation = true;
+        // _rigidbody2D.velocity = new Vector2(0, 0);
+        // _rigidbody2D.freezeRotation = true;
 
         _rigidbody2D.gameObject.transform.parent = collision.gameObject.transform;
 

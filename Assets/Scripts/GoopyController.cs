@@ -21,6 +21,8 @@ public class GoopyController : MonoBehaviour
     public Vector2 ventDirection;
     public bool stickyMode;
     public float stickyBreakForce = 20;
+    public float stickyFrequency = 1;
+    public float stickyDampening = 0;
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
@@ -189,21 +191,91 @@ public class GoopyController : MonoBehaviour
 
     void BreakStickyMode()
     {
-        Debug.Log("Breakin Sticky");
         foreach (var goop in _goops)
         {
             var springJoint2DCollection = goop.gameObject.GetComponents<SpringJoint2D>();
             foreach (var springJoint2D in springJoint2DCollection)
             {
-                Debug.Log("Jointy:" + springJoint2D.breakForce + ":" + stickyBreakForce);
                 if (springJoint2D.breakForce == stickyBreakForce)
                 {
-                    Debug.Log("Breaking!");
                     Destroy(springJoint2D);
                 }
             }
         }
     }
+
+    void Spin(bool clockwise = false)
+    {
+        //_centerOfGoops
+
+        foreach (var goop in _goops)
+        {
+            // var goop = _goops[0];
+            Rigidbody2D _rigidbody2D = goop.GetComponent<Rigidbody2D>();
+            if (_rigidbody2D.velocity.magnitude > 5)
+                continue;
+
+
+            var goopv2 = _rigidbody2D.position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+            var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
+
+            float WeirdAngle = Vector2.Angle(_centerOfGoops, _rigidbody2D.position);
+            Vector2 direction = new Vector2(_centerOfGoops.x, _centerOfGoops.y) - _rigidbody2D.position;
+            Vector2 perpDirection = Vector2.Perpendicular(direction);
+            perpDirection.Normalize();
+
+
+            // centerGoop.transform.position.x = perpDirection;
+            // centerGoop.GetComponent<Rigidbody2D>().transform.position = (perpDirection * 5) + _rigidbody2D.position;
+            
+            if(clockwise)
+                _rigidbody2D.AddForce(perpDirection * 5);
+            else
+                _rigidbody2D.AddForce(-perpDirection * 5);
+
+
+            // _rigidbody2D.AddForce()
+        }
+            
+
+
+
+        /*
+
+        var direction = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
+        direction.Normalize();
+        direction = (direction * 1) + new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+
+        var v2 = direction - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+        var velocityAngle = Mathf.Atan2(v2.y, v2.x);
+
+        foreach (var goop in _goops)
+        {
+
+            var goopv2 = goop.GetComponent<Rigidbody2D>().position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+            var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
+
+            if (goopAngle >= velocityAngle - (3.14 / 2) && goopAngle <= velocityAngle + (3.14 / 2))
+            {
+                _parachuteMode = true;
+                goop.GetComponent<SpriteRenderer>().color = Color.red;
+                goop.GetComponent<Rigidbody2D>().drag = _outerParachuteDrag;
+                SetGoopyFrequency(0.4f);
+                if (goopAngle >= velocityAngle - (3.14 / 4) && goopAngle <= velocityAngle + (3.14 / 4))
+                    goop.GetComponent<Rigidbody2D>().drag = _innerParachuteDrag;
+            }
+            else
+            {
+                goop.GetComponent<SpriteRenderer>().color = Color.white;
+                goop.GetComponent<Rigidbody2D>().drag = 0f;
+                SetGoopyFrequency(1f);
+            }
+
+        }
+
+        */
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -240,7 +312,12 @@ public class GoopyController : MonoBehaviour
             stickyMode = false;
             BreakStickyMode();
         }
-            
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+            Spin(false);
+        if (Input.GetKey(KeyCode.RightArrow))
+            Spin(true);
+
 
         //else if (!_brokenApart)
 
