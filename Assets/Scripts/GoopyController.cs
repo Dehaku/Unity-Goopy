@@ -19,12 +19,16 @@ public class GoopyController : MonoBehaviour
     public bool isInVent;
     public float ventPower;
     public Vector2 ventDirection;
+    public bool stickyMode;
+    public float stickyBreakForce = 20;
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
+    Vector2 _goopsVelocity;
     bool _pullYourselfTogether;
     bool _brokenApart;
     bool _parachuteMode;
+    
 
     
     
@@ -164,17 +168,6 @@ public class GoopyController : MonoBehaviour
         }
     }
 
-    void OnGUI()
-    {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        var v2 = mousePosition - _centerOfGoops;
-        var angle = Mathf.Atan2(v2.y, v2.x);
-
-        //Output the angle found above
-        GUI.Label(new Rect(25, 25, 200, 40), "Angle Between Objects" + angle);
-    }
-
     void VentLogic()
     {
         if(_parachuteMode && isInVent)
@@ -186,6 +179,31 @@ public class GoopyController : MonoBehaviour
         }
     }
 
+    void StickyLogic()
+    {
+        foreach (var goop in _goops)
+        {
+            goop.GetComponent<Goopy>().StickyLogic();
+        }
+    }
+
+    void BreakStickyMode()
+    {
+        Debug.Log("Breakin Sticky");
+        foreach (var goop in _goops)
+        {
+            var springJoint2DCollection = goop.gameObject.GetComponents<SpringJoint2D>();
+            foreach (var springJoint2D in springJoint2DCollection)
+            {
+                Debug.Log("Jointy:" + springJoint2D.breakForce + ":" + stickyBreakForce);
+                if (springJoint2D.breakForce == stickyBreakForce)
+                {
+                    Debug.Log("Breaking!");
+                    Destroy(springJoint2D);
+                }
+            }
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -213,14 +231,25 @@ public class GoopyController : MonoBehaviour
             GoopyParachute(true);
 
         VentLogic();
-        //else if (!_brokenApart)
+        StickyLogic();
+
+        if (Input.GetKey(KeyCode.LeftShift))
+            stickyMode = true;
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            stickyMode = false;
+            BreakStickyMode();
+        }
             
-        
-        
-        
-        
-        
-        
+
+        //else if (!_brokenApart)
+
+        _goopsVelocity = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
+
+
+
+
+
         if (Input.GetKeyDown(KeyCode.F) && Input.GetKey(KeyCode.LeftShift) && !_brokenApart)
             GoopyParachute(true); //_parachuteMode = !_parachuteMode;
 
@@ -249,6 +278,12 @@ public class GoopyController : MonoBehaviour
         {
             centerGoop.transform.position = _centerOfGoops;
         }
+    }
+
+    private void OnGUI()
+    {
+        if(_goopsVelocity.magnitude > 88)
+            GUI.Label(new Rect(25, 5, 260, 40), "Are you trying to go to a parallel world?");
     }
 
     void OnMouseDown()

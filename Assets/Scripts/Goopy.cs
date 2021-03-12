@@ -81,6 +81,35 @@ public class Goopy : MonoBehaviour
         }
     }
 
+    public void StickyLogic()
+    {
+        //Collider2D[] contacts; 
+        // gameObject.GetComponent<CircleCollider2D>().;
+
+
+
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        bool isSticky = gameObject.transform.parent.GetComponent<GoopyController>().stickyMode;
+
+        if (!isSticky)
+            return;
+
+        Goopy goopy = collision.collider.GetComponent<Goopy>();
+        if (goopy != null)
+            return;
+
+        SpringJoint2D springJoint2D = gameObject.AddComponent<SpringJoint2D>();
+        springJoint2D.enableCollision = true;
+        springJoint2D.connectedBody = collision.collider.gameObject.GetComponent<Rigidbody2D>();
+        springJoint2D.frequency = 1f;
+        springJoint2D.breakForce = gameObject.transform.parent.GetComponent<GoopyController>().stickyBreakForce;
+        springJoint2D.connectedAnchor = collision.contacts[0].point;
+        springJoint2D.autoConfigureConnectedAnchor = true;
+    }
+
 
     public void SetGoopySpringFrequency(float frequency)
     {
@@ -112,6 +141,8 @@ public class Goopy : MonoBehaviour
 
         }
     }
+
+    
 
     void AttachToAllOthers()
     {
