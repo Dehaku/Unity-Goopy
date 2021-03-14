@@ -24,15 +24,16 @@ public class GoopyController : MonoBehaviour
     public float stickyBreakForce = 20;
     public float stickyFrequency = 1;
     public float stickyDampening = 0;
-    public Vector2[] OrdinalDir = new[] { new Vector2(-1,-1),
-            new Vector2(-1,0),
-            new Vector2(-1,1),
-            new Vector2(0,-1),
-            new Vector2(0,0),
-            new Vector2(0,1),
-            new Vector2(1,-1),
-            new Vector2(1,0),
-            new Vector2(1,1)
+    public Vector2[] OrdinalDir = new[] {
+            new Vector2(0,1),  // N
+            new Vector2(1,1),  // NE
+            new Vector2(1,0),  // E
+            new Vector2(1,-1), // SE
+            new Vector2(0,-1), // S
+            new Vector2(-1,-1),// SW
+            new Vector2(-1,0), // W
+            new Vector2(-1,1), // NW
+            new Vector2(0,0)   // C
         };
 
     Vector3 _centerOfGoops;
@@ -249,10 +250,17 @@ public class GoopyController : MonoBehaviour
         ContactFilter2D contactFilter2D = new ContactFilter2D();
         contactFilter2D.NoFilter();
         //contactFilter2D.SetLayerMask(LayerMask.NameToLayer("Wall"));
-
-        float castRange = 1f;
-
+        float castRange = 3f;
         Vector2 averageAngle = new Vector2(0,0);
+
+        _SurfaceN = false;
+        _SurfaceNE = false;
+        _SurfaceE = false;
+        _SurfaceSE = false;
+        _SurfaceS = false;
+        _SurfaceSW = false;
+        _SurfaceW = false;
+        _SurfaceNW = false;
 
         foreach (var dir in OrdinalDir)
         {
@@ -260,25 +268,6 @@ public class GoopyController : MonoBehaviour
             bool angleOnce = false;
             raycastHit2D = new RaycastHit2D[10];
             Physics2D.Raycast(_centerOfGoops, dir, contactFilter2D, raycastHit2D, castRange);
-
-
-            /*
-             * new Vector2(-1, -1)
-            new Vector2(-1, 0),
-            new Vector2(-1, 1),
-            new Vector2(0, -1),
-            new Vector2(0, 0),
-            new Vector2(0, 1),
-            new Vector2(1, -1),
-            new Vector2(1, 0),
-            new Vector2(1, 1)
-                */
-
-            if (dir == OrdinalDir[0]) // SW
-            {
-
-            }
-
 
             foreach (var hit in raycastHit2D)
             {
@@ -290,6 +279,26 @@ public class GoopyController : MonoBehaviour
                     averageAngle += dir;
                     angleOnce = true;
                 }
+            }
+
+            if(hitOtherThanGoopy)
+            {
+                if (dir == new Vector2(0, 1)) // N
+                    _SurfaceN = true;
+                if (dir == new Vector2(1, 1)) // NE
+                    _SurfaceNE = true;
+                if (dir == new Vector2(1, 0)) // E
+                    _SurfaceE = true;
+                if (dir == new Vector2(1, -1)) // SE
+                    _SurfaceSE = true;
+                if (dir == new Vector2(0, -1)) // S
+                    _SurfaceS = true;
+                if (dir == new Vector2(-1, -1)) // SW
+                    _SurfaceSW = true;
+                if (dir == new Vector2(-1, 0)) // W
+                    _SurfaceW = true;
+                if (dir == new Vector2(-1, 1)) // NW
+                    _SurfaceNW = true;
             }
 
             if (hitOtherThanGoopy)
@@ -330,24 +339,20 @@ public class GoopyController : MonoBehaviour
             {
                 if (_desiredFaceDirection.y < 0)
                     _desiredFaceDirection.y = -_desiredFaceDirection.y;
-                /*
-                
-                _desiredFaceDirection = _goops[0].velocity;
-                _desiredFaceDirection.Normalize();
-                _desiredFaceDirection = Vector2.Perpendicular(_desiredFaceDirection);
-
-                */
             }
         }
         else
             goopyFace.transform.position = new Vector3(-100000, 0);
-
     }
 
     // Update is called once per frame
     void Update()
     {
         _goops = GetComponentsInChildren<Rigidbody2D>(); // It is CRITICAL that this goes first. I have no idea why null checks don't work before this is ran once. 2021-3-13
+        if (_goops.Length == 1)
+            _goops[0].GetComponent<Goopy>().SplitIntoMiniChildren();
+
+
         CalcCenterOfGoops();
         GoopyFaceLogic();
         NearestSurfaceLogic();

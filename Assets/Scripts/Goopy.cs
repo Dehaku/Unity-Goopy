@@ -66,7 +66,7 @@ public class Goopy : MonoBehaviour
         childSpawn.gameObject.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
     }
 
-    void SplitIntoMiniChildren()
+    public void SplitIntoMiniChildren()
     { 
         for (int i =0; i < _splitCount; i++)
         {
