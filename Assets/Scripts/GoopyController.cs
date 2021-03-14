@@ -12,6 +12,7 @@ public class GoopyController : MonoBehaviour
     [SerializeField] public float goopSpringFrequency = 1;
     [SerializeField] public float goopFriction = 1;
     [SerializeField] GameObject centerGoop;
+    [SerializeField] GameObject goopyFace;
     [SerializeField] GameObject _goopyStickyArrow;
     [SerializeField] float _outerParachuteDrag = 1.5f;
     [SerializeField] float _innerParachuteDrag = 3f;
@@ -23,6 +24,16 @@ public class GoopyController : MonoBehaviour
     public float stickyBreakForce = 20;
     public float stickyFrequency = 1;
     public float stickyDampening = 0;
+    public Vector2[] OrdinalDir = new[] { new Vector2(-1,-1),
+            new Vector2(-1,0),
+            new Vector2(-1,1),
+            new Vector2(0,-1),
+            new Vector2(0,0),
+            new Vector2(0,1),
+            new Vector2(1,-1),
+            new Vector2(1,0),
+            new Vector2(1,1)
+        };
 
     Vector3 _centerOfGoops;
     Rigidbody2D[] _goops;
@@ -30,10 +41,14 @@ public class GoopyController : MonoBehaviour
     bool _pullYourselfTogether;
     bool _brokenApart;
     bool _parachuteMode;
-    
+    Vector2 _directionNearest;
+    Vector2 _directionNearestAverage;
+    Vector2 _desiredFaceDirection;
+    Vector2 _currentFaceDirection;
 
-    
-    
+
+
+
 
 
     // Start is called before the first frame update
@@ -237,51 +252,83 @@ public class GoopyController : MonoBehaviour
 
             // _rigidbody2D.AddForce()
         }
-            
+    }
 
+    void NearestSurfaceLogic()
+    {
+        //  RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
+        RaycastHit2D[] raycastHit2D = new RaycastHit2D[10];
+        ContactFilter2D contactFilter2D = new ContactFilter2D();
+        contactFilter2D.NoFilter();
+        //contactFilter2D.SetLayerMask(LayerMask.NameToLayer("Wall"));
 
+        float castRange = 1f;
 
-        /*
+        Vector2 averageAngle = new Vector2(0,0);
 
-        var direction = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
-        direction.Normalize();
-        direction = (direction * 1) + new Vector2(_centerOfGoops.x, _centerOfGoops.y);
-
-        var v2 = direction - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
-        var velocityAngle = Mathf.Atan2(v2.y, v2.x);
-
-        foreach (var goop in _goops)
+        foreach (var dir in OrdinalDir)
         {
+            bool hitOtherThanGoopy = false;
+            bool angleOnce = false;
+            raycastHit2D = new RaycastHit2D[10];
+            Physics2D.Raycast(_centerOfGoops, dir, contactFilter2D, raycastHit2D, castRange);
+            // Debug.Log("Hit Total: " + raycastHit2D.Length);
 
-            var goopv2 = goop.GetComponent<Rigidbody2D>().position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
-            var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
-
-            if (goopAngle >= velocityAngle - (3.14 / 2) && goopAngle <= velocityAngle + (3.14 / 2))
+            foreach (var hit in raycastHit2D)
             {
-                _parachuteMode = true;
-                goop.GetComponent<SpriteRenderer>().color = Color.red;
-                goop.GetComponent<Rigidbody2D>().drag = _outerParachuteDrag;
-                SetGoopyFrequency(0.4f);
-                if (goopAngle >= velocityAngle - (3.14 / 4) && goopAngle <= velocityAngle + (3.14 / 4))
-                    goop.GetComponent<Rigidbody2D>().drag = _innerParachuteDrag;
+                if (hit.collider == null || hit.collider.name.StartsWith("Goopy"))
+                    continue;
+                // Debug.Log("Hit:" + hit.collider.name);
+                hitOtherThanGoopy = true;
+                if(!angleOnce)
+                {
+                    averageAngle += dir;
+                    angleOnce = true;
+                }
+                
             }
+
+            if (hitOtherThanGoopy)
+                Debug.DrawRay(_centerOfGoops, dir * castRange, Color.green);
             else
-            {
-                goop.GetComponent<SpriteRenderer>().color = Color.white;
-                goop.GetComponent<Rigidbody2D>().drag = 0f;
-                SetGoopyFrequency(1f);
-            }
+                Debug.DrawRay(_centerOfGoops, dir * castRange, Color.red);
+
+            
 
         }
 
-        */
+        Debug.DrawRay(_centerOfGoops, averageAngle * castRange * 2, Color.blue);
+        averageAngle.Normalize();
+        Debug.DrawRay(_centerOfGoops, averageAngle * castRange * 2, Color.gray);
+        _directionNearestAverage = averageAngle;
+
+
+
+
     }
 
+    void GoopyFaceLogic()
+    {
+        _currentFaceDirection.Normalize();
+        _currentFaceDirection = _currentFaceDirection + (_desiredFaceDirection / 8);
+        Debug.Log("Avg:" + _directionNearestAverage + ", cur: " + _currentFaceDirection + ", des:" + _desiredFaceDirection + ", com:");
+        goopyFace.transform.up = _currentFaceDirection;
+        if (!_brokenApart)
+        {
+            goopyFace.transform.position = new Vector3(_centerOfGoops.x, _centerOfGoops.y, -10);
+            _desiredFaceDirection = -_directionNearestAverage;
+        }
+        else
+            goopyFace.transform.position = new Vector3(-100000, 0);
+
+    }
 
     // Update is called once per frame
     void Update()
     {
+        GoopyFaceLogic();
         CalcCenterOfGoops();
+        NearestSurfaceLogic();
 
         if (Input.GetKey(KeyCode.A))
             GoopyMove(new Vector2(-_movementForce, 0));

@@ -9,7 +9,7 @@ public class Goopy : MonoBehaviour
 
     Rigidbody2D _rigidbody2D;
 
-    [SerializeField] float _movementForce = 5;
+    // [SerializeField] float _movementForce = 5;
     [SerializeField] int _splitCount = 6;
     [SerializeField] float _splitRadius = 2f;
 
@@ -35,11 +35,12 @@ public class Goopy : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow))
             _rigidbody2D.AddForce(new Vector2(_movementForce, 0));
         */
+
+        if (Input.GetKeyDown(KeyCode.Z))
+            _rigidbody2D.AddForce(new Vector2(0, 500));
+
         /*
-        if (Input.GetKeyDown(KeyCode.Space) && 
-            !Input.GetKey(KeyCode.LeftShift) &&
-            !Input.GetKey(KeyCode.LeftControl))
-            _rigidbody2D.AddForce(new Vector2(0, _jumpForce));
+        
         if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift))
             SpawnMiniChild();
         */
