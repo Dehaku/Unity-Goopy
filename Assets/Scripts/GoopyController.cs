@@ -360,37 +360,57 @@ public class GoopyController : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             GoopyMove(new Vector2(-_movementForce/4, 0));
-            if (_directionNearestAverage.y > 0)
-                Spin(true);
-            else
-                Spin(false);
+            if (!_brokenApart)
+            {
+                if (_directionNearestAverage.y > 0)
+                    Spin(true);
+                else
+                    Spin(false);
+            }
+                
         }
             
         if (Input.GetKey(KeyCode.D))
         {
             GoopyMove(new Vector2(_movementForce / 4, 0));
-            if (_directionNearestAverage.y > 0)
-                Spin(false);
-            else
-                Spin(true);
+            
+            if(!_brokenApart)
+            {
+                if (_directionNearestAverage.y > 0)
+                    Spin(false);
+                else
+                    Spin(true);
+            }
+                
         }
             
         if (Input.GetKey(KeyCode.W) && _directionNearestAverage != new Vector2())
         {
             GoopyMove(new Vector2(0, _movementForce / 4));
-            if (_directionNearestAverage.x > 0)
-                Spin(true);
-            else
-                Spin(false);
+
+            if (!_brokenApart)
+            {
+                if (_directionNearestAverage.x > 0)
+                    Spin(true);
+                else
+                    Spin(false);
+            }
+                
         }
             
         if (Input.GetKey(KeyCode.S))
         {
+
             GoopyMove(new Vector2(0, -_movementForce));
-            if (_directionNearestAverage.x > 0)
-                Spin(false);
-            else
-                Spin(true);
+
+            if (!_brokenApart)
+            {
+                if (_directionNearestAverage.x > 0)
+                    Spin(false);
+                else
+                    Spin(true);
+            }
+            
         }
             
 
