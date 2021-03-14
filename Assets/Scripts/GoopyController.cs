@@ -222,41 +222,28 @@ public class GoopyController : MonoBehaviour
 
     void Spin(bool clockwise = false)
     {
-        //_centerOfGoops
-
         foreach (var goop in _goops)
         {
-            // var goop = _goops[0];
             Rigidbody2D _rigidbody2D = goop.GetComponent<Rigidbody2D>();
             if (_rigidbody2D.velocity.magnitude > 5)
                 continue;
 
-
             var goopv2 = _rigidbody2D.position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
             var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
-
             float WeirdAngle = Vector2.Angle(_centerOfGoops, _rigidbody2D.position);
             Vector2 direction = new Vector2(_centerOfGoops.x, _centerOfGoops.y) - _rigidbody2D.position;
             Vector2 perpDirection = Vector2.Perpendicular(direction);
             perpDirection.Normalize();
 
-
-            // centerGoop.transform.position.x = perpDirection;
-            // centerGoop.GetComponent<Rigidbody2D>().transform.position = (perpDirection * 5) + _rigidbody2D.position;
-            
             if(clockwise)
                 _rigidbody2D.AddForce(perpDirection * 5);
             else
                 _rigidbody2D.AddForce(-perpDirection * 5);
-
-
-            // _rigidbody2D.AddForce()
         }
     }
 
     void NearestSurfaceLogic()
     {
-        //  RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
         RaycastHit2D[] raycastHit2D = new RaycastHit2D[10];
         ContactFilter2D contactFilter2D = new ContactFilter2D();
         contactFilter2D.NoFilter();
@@ -272,51 +259,72 @@ public class GoopyController : MonoBehaviour
             bool angleOnce = false;
             raycastHit2D = new RaycastHit2D[10];
             Physics2D.Raycast(_centerOfGoops, dir, contactFilter2D, raycastHit2D, castRange);
-            // Debug.Log("Hit Total: " + raycastHit2D.Length);
 
             foreach (var hit in raycastHit2D)
             {
                 if (hit.collider == null || hit.collider.name.StartsWith("Goopy"))
                     continue;
-                // Debug.Log("Hit:" + hit.collider.name);
                 hitOtherThanGoopy = true;
                 if(!angleOnce)
                 {
                     averageAngle += dir;
                     angleOnce = true;
                 }
-                
             }
 
             if (hitOtherThanGoopy)
                 Debug.DrawRay(_centerOfGoops, dir * castRange, Color.green);
             else
                 Debug.DrawRay(_centerOfGoops, dir * castRange, Color.red);
-
-            
-
         }
 
         Debug.DrawRay(_centerOfGoops, averageAngle * castRange * 2, Color.blue);
         averageAngle.Normalize();
         Debug.DrawRay(_centerOfGoops, averageAngle * castRange * 2, Color.gray);
         _directionNearestAverage = averageAngle;
-
-
-
-
     }
 
     void GoopyFaceLogic()
     {
         _currentFaceDirection.Normalize();
         _currentFaceDirection = _currentFaceDirection + (_desiredFaceDirection / 8);
+        if (_currentFaceDirection.x < 0)
+        {
+            goopyFace.GetComponent<SpriteRenderer>().flipX = true;
+        }
+        else
+            goopyFace.GetComponent<SpriteRenderer>().flipX = false;
+
+
         Debug.Log("Avg:" + _directionNearestAverage + ", cur: " + _currentFaceDirection + ", des:" + _desiredFaceDirection + ", com:");
         goopyFace.transform.up = _currentFaceDirection;
         if (!_brokenApart)
         {
             goopyFace.transform.position = new Vector3(_centerOfGoops.x, _centerOfGoops.y, -10);
             _desiredFaceDirection = -_directionNearestAverage;
+
+            Vector2 goopVelo = _goops[0].velocity;
+            goopVelo.Normalize();
+            goopVelo = Vector2.Perpendicular(goopVelo);
+            _desiredFaceDirection += goopVelo * 0.1f;
+
+            foreach (var goop in _goops)
+            {
+                Debug.Log("Wat");
+            }
+
+            if(_directionNearestAverage == new Vector2(0,0))
+            {
+                if (_desiredFaceDirection.y < 0)
+                    _desiredFaceDirection.y = -_desiredFaceDirection.y;
+                /*
+                
+                _desiredFaceDirection = _goops[0].velocity;
+                _desiredFaceDirection.Normalize();
+                _desiredFaceDirection = Vector2.Perpendicular(_desiredFaceDirection);
+
+                */
+            }
         }
         else
             goopyFace.transform.position = new Vector3(-100000, 0);
@@ -326,8 +334,9 @@ public class GoopyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GoopyFaceLogic();
+        _goops = GetComponentsInChildren<Rigidbody2D>(); // It is CRITICAL that this goes first. I have no idea why null checks don't work before this is ran once. 2021-3-13
         CalcCenterOfGoops();
+        GoopyFaceLogic();
         NearestSurfaceLogic();
 
         if (Input.GetKey(KeyCode.A))
