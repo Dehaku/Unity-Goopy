@@ -43,6 +43,7 @@ public class GoopyController : MonoBehaviour
     bool _parachuteMode;
     Vector2 _directionNearest;
     Vector2 _directionNearestAverage;
+    bool _SurfaceN, _SurfaceNE, _SurfaceE, _SurfaceSE, _SurfaceS, _SurfaceSW, _SurfaceW, _SurfaceNW;
     Vector2 _desiredFaceDirection;
     Vector2 _currentFaceDirection;
 
@@ -234,8 +235,8 @@ public class GoopyController : MonoBehaviour
             Vector2 direction = new Vector2(_centerOfGoops.x, _centerOfGoops.y) - _rigidbody2D.position;
             Vector2 perpDirection = Vector2.Perpendicular(direction);
             perpDirection.Normalize();
-
-            if(clockwise)
+           
+            if (clockwise)
                 _rigidbody2D.AddForce(perpDirection * 5);
             else
                 _rigidbody2D.AddForce(-perpDirection * 5);
@@ -259,6 +260,25 @@ public class GoopyController : MonoBehaviour
             bool angleOnce = false;
             raycastHit2D = new RaycastHit2D[10];
             Physics2D.Raycast(_centerOfGoops, dir, contactFilter2D, raycastHit2D, castRange);
+
+
+            /*
+             * new Vector2(-1, -1)
+            new Vector2(-1, 0),
+            new Vector2(-1, 1),
+            new Vector2(0, -1),
+            new Vector2(0, 0),
+            new Vector2(0, 1),
+            new Vector2(1, -1),
+            new Vector2(1, 0),
+            new Vector2(1, 1)
+                */
+
+            if (dir == OrdinalDir[0]) // SW
+            {
+
+            }
+
 
             foreach (var hit in raycastHit2D)
             {
@@ -295,8 +315,6 @@ public class GoopyController : MonoBehaviour
         else
             goopyFace.GetComponent<SpriteRenderer>().flipX = false;
 
-
-        Debug.Log("Avg:" + _directionNearestAverage + ", cur: " + _currentFaceDirection + ", des:" + _desiredFaceDirection + ", com:");
         goopyFace.transform.up = _currentFaceDirection;
         if (!_brokenApart)
         {
@@ -307,11 +325,6 @@ public class GoopyController : MonoBehaviour
             goopVelo.Normalize();
             goopVelo = Vector2.Perpendicular(goopVelo);
             _desiredFaceDirection += goopVelo * 0.1f;
-
-            foreach (var goop in _goops)
-            {
-                Debug.Log("Wat");
-            }
 
             if(_directionNearestAverage == new Vector2(0,0))
             {
@@ -340,13 +353,41 @@ public class GoopyController : MonoBehaviour
         NearestSurfaceLogic();
 
         if (Input.GetKey(KeyCode.A))
-            GoopyMove(new Vector2(-_movementForce, 0));
+        {
+            GoopyMove(new Vector2(-_movementForce/4, 0));
+            if (_directionNearestAverage.y > 0)
+                Spin(true);
+            else
+                Spin(false);
+        }
+            
         if (Input.GetKey(KeyCode.D))
-            GoopyMove(new Vector2(_movementForce, 0));
-        if (Input.GetKey(KeyCode.W))
-            GoopyMove(new Vector2(0, _movementForce/4));
+        {
+            GoopyMove(new Vector2(_movementForce / 4, 0));
+            if (_directionNearestAverage.y > 0)
+                Spin(false);
+            else
+                Spin(true);
+        }
+            
+        if (Input.GetKey(KeyCode.W) && _directionNearestAverage != new Vector2())
+        {
+            GoopyMove(new Vector2(0, _movementForce / 4));
+            if (_directionNearestAverage.x > 0)
+                Spin(true);
+            else
+                Spin(false);
+        }
+            
         if (Input.GetKey(KeyCode.S))
+        {
             GoopyMove(new Vector2(0, -_movementForce));
+            if (_directionNearestAverage.x > 0)
+                Spin(false);
+            else
+                Spin(true);
+        }
+            
 
         /*
         
