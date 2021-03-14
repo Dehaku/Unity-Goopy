@@ -1,5 +1,87 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &862751341
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 862751343}
+  - component: {fileID: 862751342}
+  m_Layer: 0
+  m_Name: GoopyFace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &862751343
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862751341}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.78, y: 0.6, z: -10}
+  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4653922875307186800}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &862751342
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862751341}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1184765355
+  m_SortingLayer: 1
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 30d982c35d35d63458b858e5fe2e1838, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.64, y: 0.64}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &4653922875307186801
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,6 +91,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4653922875307186800}
+  - component: {fileID: 1058570669}
+  - component: {fileID: 1058570670}
   m_Layer: 0
   m_Name: GoopyController
   m_TagString: Untagged
@@ -28,23 +112,63 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4653922876310942880}
+  - {fileID: 862751343}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4653922875895184634
+--- !u!114 &1058570669
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653922876310942882}
-  m_Enabled: 0
+  m_GameObject: {fileID: 4653922875307186801}
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b105711b407e7ba4780b2a541e41be61, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bf7ac90b0f4c774f90e4b18a6f642e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: f887dcd05d9be1940b0557e1c0347d6b, type: 3}
-  _amountOfLines: 10
+--- !u!114 &1058570670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653922875307186801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 224b04c32a0f097419920fb8dcb17307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movementForce: 5
+  goopJumpForce: 500
+  goopShootForce: 2500
+  goopSpringDistance: 2
+  goopSpringDampeningRatio: 0
+  goopSpringFrequency: 1
+  goopFriction: 1
+  centerGoop: {fileID: 0}
+  goopyFace: {fileID: 862751341}
+  _goopyStickyArrow: {fileID: 3384162659211569439, guid: 9390768d1df75a34b98eb63156661c98, type: 3}
+  _outerParachuteDrag: 1
+  _innerParachuteDrag: 5
+  isInVent: 0
+  ventPower: 0
+  ventDirection: {x: 0, y: 0}
+  stickyMode: 0
+  stickyBreakForce: 350
+  stickyFrequency: 500
+  stickyDampening: 0
+  OrdinalDir:
+  - {x: -1, y: -1}
+  - {x: -1, y: 0}
+  - {x: -1, y: 1}
+  - {x: 0, y: -1}
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: -1}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
 --- !u!1001 &5933941294994465283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62,15 +186,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.035404682
+      value: -7.78
       objectReference: {fileID: 0}
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.4165447
+      value: 0.64
       objectReference: {fileID: 0}
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.683702
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -102,11 +226,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
---- !u!1 &4653922876310942882 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1355467050481964705, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
-  m_PrefabInstance: {fileID: 5933941294994465283}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4653922876310942880 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1355467050481964707, guid: 66ed7ddcd4092ba41bf371fb02ca313f, type: 3}
