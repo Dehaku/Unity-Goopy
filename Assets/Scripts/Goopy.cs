@@ -83,15 +83,6 @@ public class Goopy : MonoBehaviour
         }
     }
 
-    public void StickyLogic()
-    {
-        //Collider2D[] contacts; 
-        // gameObject.GetComponent<CircleCollider2D>().;
-
-
-
-    }
-
     void OnCollisionStay2D(Collision2D collision)
     {
         bool isSticky = gameObject.transform.parent.GetComponent<GoopyController>().stickyMode;

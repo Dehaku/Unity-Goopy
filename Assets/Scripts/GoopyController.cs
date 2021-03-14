@@ -122,7 +122,16 @@ public class GoopyController : MonoBehaviour
     void GoopyMove(Vector2 moveDirection)
     {
         foreach (var goop in _goops)
+        {
             goop.GetComponent<Rigidbody2D>().AddForce(moveDirection);
+            // Check angle of movement, magnitude, and desired move direction before allowing GoopyMove to add speed.
+            /*
+            Rigidbody2D _rigidbody2D = goop.GetComponent<Rigidbody2D>();
+            if (_rigidbody2D.velocity.magnitude > 5)
+                continue;
+            */
+        }
+            
     }
 
     void GoopyParachute(bool resetStuff = false)
@@ -178,14 +187,6 @@ public class GoopyController : MonoBehaviour
             {
                 goop.AddForce(ventDirection * ventPower);
             }
-        }
-    }
-
-    void StickyLogic()
-    {
-        foreach (var goop in _goops)
-        {
-            goop.GetComponent<Goopy>().StickyLogic();
         }
     }
 
@@ -286,15 +287,35 @@ public class GoopyController : MonoBehaviour
             GoopyMove(new Vector2(-_movementForce, 0));
         if (Input.GetKey(KeyCode.D))
             GoopyMove(new Vector2(_movementForce, 0));
+        if (Input.GetKey(KeyCode.W))
+            GoopyMove(new Vector2(0, _movementForce/4));
+        if (Input.GetKey(KeyCode.S))
+            GoopyMove(new Vector2(0, -_movementForce));
 
+        /*
+        
+        if (Input.GetKeyDown(KeyCode.Space) && !_brokenApart)
+            GoopyJump();
+        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift)) 
+            GoopyJump(); // For debug/display purposes while settings are adjusted.
+
+        if (Input.GetMouseButtonDown(0))
+            FireGoopyStickyArrow();
+
+        */
+
+        /*
+        
         if (Input.GetKey(KeyCode.S) && !_brokenApart)
             SetGoopyFrequency(0.25f);
         if (Input.GetKeyUp(KeyCode.S) && !_brokenApart)
             SetGoopyFrequency(goopSpringFrequency);
 
-        if (Input.GetKey(KeyCode.W) && !_brokenApart)
+        */
+
+        if (Input.GetKey(KeyCode.Space) && !_brokenApart)
             SetGoopyFrequency(10f);
-        if (Input.GetKeyUp(KeyCode.W) && !_brokenApart)
+        if (Input.GetKeyUp(KeyCode.Space) && !_brokenApart)
             SetGoopyFrequency(goopSpringFrequency);
 
         if (Input.GetKey(KeyCode.F) && !_brokenApart)
@@ -303,7 +324,6 @@ public class GoopyController : MonoBehaviour
             GoopyParachute(true);
 
         VentLogic();
-        StickyLogic();
 
         if (Input.GetKey(KeyCode.LeftShift))
             stickyMode = true;
@@ -341,13 +361,8 @@ public class GoopyController : MonoBehaviour
             _pullYourselfTogether = true;
         PullYourselfTogether();
 
-        if (Input.GetKeyDown(KeyCode.Space) && !_brokenApart)
-            GoopyJump();
-        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift)) 
-            GoopyJump(); // For debug/display purposes while settings are adjusted.
-
-        if (Input.GetMouseButtonDown(0))
-            FireGoopyStickyArrow();
+        
+        
         
 
 
