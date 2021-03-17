@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Metaball Camera
+  m_Shader: {fileID: -6465566751694194690, guid: 7cabeba3f2af4d2449917bc697e71257, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_fd0d10b175e64c0c99b631eca2ac1da8:
+        m_Texture: {fileID: 8400000, guid: 6870e787ee566754296e10a2b36be550, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Wee:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 8400000, guid: 6870e787ee566754296e10a2b36be550, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_1ede3e1f8d724b71a0796cb4d49c2082_Texture_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_11d9740eefce4dd9bc8ae7e4a056757a: 0.1
+    - Vector1_a1ea0b5cbbc14b85be485aac67a4668f: 0.2
+    - Vector1_bc18f6c0d1964c49ba63bc9e98a7a946: 0.001
+    - Vector1_d585fd7623ac488bbc89b06e6e8b403b: 0.1
+    m_Colors:
+    - Vector4_0e63cd8e30de43278434f3a221efc91d: {r: 2, g: 218, b: 254, a: 0}
+    - Vector4_afb5e569826a409ab99d9bfb0164387d: {r: 135, g: 135, b: 135, a: 255}
+  m_BuildTextureStacks: []
