@@ -16,7 +16,7 @@ public class Goopy : MonoBehaviour
     void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        FindObjectOfType<Cinemachine.CinemachineTargetGroup>().AddMember(gameObject.transform, 1f, 5f);
+        FindObjectOfType<Cinemachine.CinemachineTargetGroup>().AddMember(gameObject.transform, 1f, 2f);
     }
 
     // Start is called before the first frame update
