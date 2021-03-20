@@ -9,7 +9,6 @@ public class Goopy : MonoBehaviour
 
     Rigidbody2D _rigidbody2D;
 
-    // [SerializeField] float _movementForce = 5;
     [SerializeField] int _splitCount = 6;
     [SerializeField] float _splitRadius = 2f;
 
@@ -29,21 +28,8 @@ public class Goopy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        if (Input.GetKey(KeyCode.LeftArrow))
-            _rigidbody2D.AddForce(new Vector2(-_movementForce, 0));
-        if (Input.GetKey(KeyCode.RightArrow))
-            _rigidbody2D.AddForce(new Vector2(_movementForce, 0));
-        */
-
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z)) // Debug purposes, don't depend on this.
             _rigidbody2D.AddForce(new Vector2(0, 500));
-
-        /*
-        
-        if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift))
-            SpawnMiniChild();
-        */
 
         if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftControl))
             SplitIntoMiniChildren();
@@ -54,8 +40,6 @@ public class Goopy : MonoBehaviour
             SetGoopySpringFrequency(1f);
         if (Input.GetKeyDown(KeyCode.X))
             UpdateGoopySpringFromSerialize();
-
-
     }
 
     void SpawnMiniChild()
@@ -94,6 +78,13 @@ public class Goopy : MonoBehaviour
         Goopy goopy = collision.collider.GetComponent<Goopy>();
         if (goopy != null)
             return;
+
+        ObjectProperties stickiness = collision.collider.GetComponent<ObjectProperties>();
+        if (stickiness != null) // By default, everything is stickable, so to prevent ObjectProperty spam, we don't need it for grabbability.
+            if (!stickiness.surfaceStickable)
+                return;
+
+
 
         float stickyBreakforce = gameObject.transform.parent.GetComponent<GoopyController>().stickyBreakForce;
         float stickyFrequency = gameObject.transform.parent.GetComponent<GoopyController>().stickyFrequency;

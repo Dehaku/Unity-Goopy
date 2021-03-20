@@ -264,8 +264,14 @@ public class GoopyController : MonoBehaviour
 
             foreach (var hit in raycastHit2D)
             {
-                if (hit.collider == null || hit.collider.name.StartsWith("Goopy"))
+                if (hit.collider == null || hit.collider.name.StartsWith("Goopy")) // Don't want to face ourselves
                     continue;
+                ObjectProperties stickiness = hit.collider.GetComponent<ObjectProperties>();
+                if (stickiness == null) // Requires a sticky controller
+                    continue;
+                if (!stickiness.stickableClimbGravityHelp)
+                    continue;
+                
                 hitOtherThanGoopy = true;
                 if(!angleOnce)
                 {
@@ -346,10 +352,15 @@ public class GoopyController : MonoBehaviour
 
     void HangGravity()
     {
-        if (_SurfaceN && !_SurfaceS)
+        if(_directionNearestAverage != new Vector2() && stickyMode && !_SurfaceS)
             GoopyGravity(_hangGravity);
         else
             GoopyGravity(_defaultGravity);
+
+        //if (_SurfaceN && !_SurfaceS)
+        //    GoopyGravity(_hangGravity);
+        //else
+        //    GoopyGravity(_defaultGravity);
 
     }
 
@@ -389,6 +400,8 @@ public class GoopyController : MonoBehaviour
                     Spin(true);
                 else if (spinsTrue < spinsFalse)
                     Spin(false);
+                if (_directionNearestAverage == new Vector2()) // If nothing detected nearby(Either in air, or nothing to stick to) still spin.
+                    Spin(false);
             }
         }
             
@@ -416,12 +429,14 @@ public class GoopyController : MonoBehaviour
                     Spin(true);
                 else if (spinsTrue < spinsFalse)
                     Spin(false);
+                if (_directionNearestAverage == new Vector2()) // If nothing detected nearby(Either in air, or nothing to stick to) still spin.
+                    Spin(true);
             }
         }
             
         if (Input.GetKey(KeyCode.W) && _directionNearestAverage != new Vector2())
         {
-            GoopyMove(new Vector2(0, _movementForce / 4));
+            GoopyMove(new Vector2(0, _movementForce/4));
 
             if (!_brokenApart)
             {
