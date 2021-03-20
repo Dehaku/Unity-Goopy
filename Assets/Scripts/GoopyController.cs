@@ -132,12 +132,6 @@ public class GoopyController : MonoBehaviour
             goop.GetComponent<Goopy>().SetGoopySpringFrequency(frequency);
     }
 
-    void GoopyJump()
-    {
-        foreach (var goop in _goops)
-            goop.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, goopJumpForce));
-    }
-
     void GoopyMove(Vector2 moveDirection)
     {
         foreach (var goop in _goops)
@@ -232,9 +226,6 @@ public class GoopyController : MonoBehaviour
             if (_rigidbody2D.velocity.magnitude > 5)
                 continue;
 
-            var goopv2 = _rigidbody2D.position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
-            var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
-            float WeirdAngle = Vector2.Angle(_centerOfGoops, _rigidbody2D.position);
             Vector2 direction = new Vector2(_centerOfGoops.x, _centerOfGoops.y) - _rigidbody2D.position;
             Vector2 perpDirection = Vector2.Perpendicular(direction);
             perpDirection.Normalize();
@@ -380,32 +371,25 @@ public class GoopyController : MonoBehaviour
             GoopyMove(new Vector2(-_movementForce/4, 0));
             if (!_brokenApart)
             {
-                if (_SurfaceN || _SurfaceNW || _SurfaceNE)
-                {
+                int spinsTrue = 0; // This is a psuedo weight system to prevent stalemates when hitting corners. 
+                int spinsFalse = 0;// Lot more logic than I'd like, but it's all fast at least.
+                if (_SurfaceN)
+                    spinsTrue++;
+                if (_SurfaceNW)
+                    spinsTrue++;
+                if (_SurfaceNE)
+                    spinsTrue++;
+                if (_SurfaceS)
+                    spinsFalse++;
+                if (_SurfaceSW)
+                    spinsFalse++;
+                if (_SurfaceSE)
+                    spinsFalse++;
+                if (spinsTrue > spinsFalse)
                     Spin(true);
-                }
-                if (_SurfaceS || _SurfaceSW || _SurfaceSE)
-                {
+                else if (spinsTrue < spinsFalse)
                     Spin(false);
-                }
-
-                /*
-                if(_SurfaceN)
-                {
-                    Spin(true);
-                }
-                else if(_SurfaceS)
-                {
-                    Spin(false);
-                }
-                */
-
-                //if (_directionNearestAverage.y > 0)
-                //    Spin(true);
-                //else
-                //    Spin(false);
             }
-                
         }
             
         if (Input.GetKey(KeyCode.D))
@@ -414,21 +398,25 @@ public class GoopyController : MonoBehaviour
             
             if(!_brokenApart)
             {
-                if (_SurfaceN || _SurfaceNW || _SurfaceNE)
-                {
-                    Spin(false);
-                }
-                if (_SurfaceS || _SurfaceSW || _SurfaceSE)
-                {
+                int spinsTrue = 0; // This is a psuedo weight system to prevent stalemates when hitting corners. 
+                int spinsFalse = 0;// Lot more logic than I'd like, but it's all fast at least.
+                if (_SurfaceS)
+                    spinsTrue++;
+                if (_SurfaceSW)
+                    spinsTrue++;
+                if (_SurfaceSE)
+                    spinsTrue++;
+                if (_SurfaceN)
+                    spinsFalse++;
+                if (_SurfaceNW)
+                    spinsFalse++;
+                if (_SurfaceNE)
+                    spinsFalse++;
+                if (spinsTrue > spinsFalse)
                     Spin(true);
-                }
-
-                //if (_directionNearestAverage.y > 0)
-                //    Spin(false);
-                //else
-                //    Spin(true);
+                else if (spinsTrue < spinsFalse)
+                    Spin(false);
             }
-                
         }
             
         if (Input.GetKey(KeyCode.W) && _directionNearestAverage != new Vector2())
@@ -437,20 +425,25 @@ public class GoopyController : MonoBehaviour
 
             if (!_brokenApart)
             {
-                if (_SurfaceE || _SurfaceNE || _SurfaceSE)
-                {
+                int spinsTrue = 0; // This is a psuedo weight system to prevent stalemates when hitting corners. 
+                int spinsFalse = 0;// Lot more logic than I'd like, but it's all fast at least.
+                if (_SurfaceE)
+                    spinsTrue++;
+                if (_SurfaceSE)
+                    spinsTrue++;
+                if (_SurfaceNE)
+                    spinsTrue++;
+                if (_SurfaceW)
+                    spinsFalse++;
+                if (_SurfaceNW)
+                    spinsFalse++;
+                if (_SurfaceSW)
+                    spinsFalse++;
+                if (spinsTrue > spinsFalse)
                     Spin(true);
-                }
-                if (_SurfaceW || _SurfaceNW || _SurfaceSW)
-                {
+                else if (spinsTrue < spinsFalse)
                     Spin(false);
-                }
-                //if (_directionNearestAverage.x > 0)
-                //    Spin(true);
-                //else
-                //    Spin(false);
             }
-                
         }
             
         if (Input.GetKey(KeyCode.S))
@@ -460,44 +453,27 @@ public class GoopyController : MonoBehaviour
 
             if (!_brokenApart)
             {
-                if (_SurfaceE || _SurfaceNE || _SurfaceSE)
-                {
-                    Spin(false);
-                }
-                if (_SurfaceW || _SurfaceNW || _SurfaceSW)
-                {
+                int spinsTrue = 0; // This is a psuedo weight system to prevent stalemates when hitting corners. 
+                int spinsFalse = 0;// Lot more logic than I'd like, but it's all fast at least.
+                if (_SurfaceW)
+                    spinsTrue++;
+                if (_SurfaceSW)
+                    spinsTrue++;
+                if (_SurfaceNW)
+                    spinsTrue++;
+                if (_SurfaceE)
+                    spinsFalse++;
+                if (_SurfaceNE)
+                    spinsFalse++;
+                if (_SurfaceSE)
+                    spinsFalse++;
+                if (spinsTrue > spinsFalse)
                     Spin(true);
-                }
-                //if (_directionNearestAverage.x > 0)
-                //    Spin(false);
-                //else
-                //    Spin(true);
+                else if (spinsTrue < spinsFalse)
+                    Spin(false);
             }
-            
         }
             
-
-        /*
-        
-        if (Input.GetKeyDown(KeyCode.Space) && !_brokenApart)
-            GoopyJump();
-        if(Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift)) 
-            GoopyJump(); // For debug/display purposes while settings are adjusted.
-
-        if (Input.GetMouseButtonDown(0))
-            FireGoopyStickyArrow();
-
-        */
-
-        /*
-        
-        if (Input.GetKey(KeyCode.S) && !_brokenApart)
-            SetGoopyFrequency(0.25f);
-        if (Input.GetKeyUp(KeyCode.S) && !_brokenApart)
-            SetGoopyFrequency(goopSpringFrequency);
-
-        */
-
         if (Input.GetKey(KeyCode.Space) && !_brokenApart)
             SetGoopyFrequency(10f);
         if (Input.GetKeyUp(KeyCode.Space) && !_brokenApart)
@@ -524,12 +500,7 @@ public class GoopyController : MonoBehaviour
             Spin(true);
 
 
-        //else if (!_brokenApart)
-
         _goopsVelocity = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
-
-
-
 
 
         if (Input.GetKeyDown(KeyCode.F) && Input.GetKey(KeyCode.LeftShift) && !_brokenApart)
@@ -545,11 +516,6 @@ public class GoopyController : MonoBehaviour
         if (Input.GetKey(KeyCode.R))       // Automatically pull yourself together.
             _pullYourselfTogether = true;
         PullYourselfTogether();
-
-        
-        
-        
-
 
         if (_goops.Length > 0)
         {
