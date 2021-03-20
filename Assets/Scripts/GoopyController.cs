@@ -19,7 +19,7 @@ public class GoopyController : MonoBehaviour
     [SerializeField] float _outerParachuteDrag = 1.5f;
     [SerializeField] float _innerParachuteDrag = 3f;
 
-    public bool isInVent;
+    public bool isInVent = false;
     public float ventPower;
     public Vector2 ventDirection;
     public bool stickyMode;
@@ -58,7 +58,7 @@ public class GoopyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Application.targetFrameRate = 60;
     }
 
     void CalcCenterOfGoops()
@@ -149,6 +149,11 @@ public class GoopyController : MonoBehaviour
 
     void GoopyParachute(bool resetStuff = false)
     {
+        bool doesDevKnowAboutAirWalking = true;
+        if(doesDevKnowAboutAirWalking)
+        {
+            // yep.
+        }
         // if (_parachuteMode)
         {
             var direction = _goops[0].gameObject.GetComponent<Rigidbody2D>().velocity;
@@ -379,7 +384,7 @@ public class GoopyController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A))
         {
-            GoopyMove(new Vector2(-_movementForce/4, 0));
+            GoopyMove(new Vector2(-_movementForce, 0));
             if (!_brokenApart)
             {
                 int spinsTrue = 0; // This is a psuedo weight system to prevent stalemates when hitting corners. 
@@ -407,7 +412,7 @@ public class GoopyController : MonoBehaviour
             
         if (Input.GetKey(KeyCode.D))
         {
-            GoopyMove(new Vector2(_movementForce / 4, 0));
+            GoopyMove(new Vector2(_movementForce, 0));
             
             if(!_brokenApart)
             {
@@ -436,7 +441,7 @@ public class GoopyController : MonoBehaviour
             
         if (Input.GetKey(KeyCode.W) && _directionNearestAverage != new Vector2())
         {
-            GoopyMove(new Vector2(0, _movementForce/4));
+            GoopyMove(new Vector2(0, _movementForce));
 
             if (!_brokenApart)
             {
