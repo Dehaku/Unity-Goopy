@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GoopyController : MonoBehaviour
 {
+    [SerializeField] float _defaultGravity = 1;
+    [SerializeField] float _hangGravity = 0.25f;
     [SerializeField] float _movementForce = 5;
     [SerializeField] public float goopJumpForce = 500;
     [SerializeField] public float goopShootForce = 500;
@@ -250,7 +252,7 @@ public class GoopyController : MonoBehaviour
         ContactFilter2D contactFilter2D = new ContactFilter2D();
         contactFilter2D.NoFilter();
         //contactFilter2D.SetLayerMask(LayerMask.NameToLayer("Wall"));
-        float castRange = 3f;
+        float castRange = 1f;
         Vector2 averageAngle = new Vector2(0,0);
 
         _SurfaceN = false;
@@ -362,10 +364,30 @@ public class GoopyController : MonoBehaviour
             GoopyMove(new Vector2(-_movementForce/4, 0));
             if (!_brokenApart)
             {
-                if (_directionNearestAverage.y > 0)
+                if (_SurfaceN || _SurfaceNW || _SurfaceNE)
+                {
                     Spin(true);
-                else
+                }
+                if (_SurfaceS || _SurfaceSW || _SurfaceSE)
+                {
                     Spin(false);
+                }
+
+                /*
+                if(_SurfaceN)
+                {
+                    Spin(true);
+                }
+                else if(_SurfaceS)
+                {
+                    Spin(false);
+                }
+                */
+
+                //if (_directionNearestAverage.y > 0)
+                //    Spin(true);
+                //else
+                //    Spin(false);
             }
                 
         }
@@ -376,10 +398,19 @@ public class GoopyController : MonoBehaviour
             
             if(!_brokenApart)
             {
-                if (_directionNearestAverage.y > 0)
+                if (_SurfaceN || _SurfaceNW || _SurfaceNE)
+                {
                     Spin(false);
-                else
+                }
+                if (_SurfaceS || _SurfaceSW || _SurfaceSE)
+                {
                     Spin(true);
+                }
+
+                //if (_directionNearestAverage.y > 0)
+                //    Spin(false);
+                //else
+                //    Spin(true);
             }
                 
         }
@@ -390,10 +421,18 @@ public class GoopyController : MonoBehaviour
 
             if (!_brokenApart)
             {
-                if (_directionNearestAverage.x > 0)
+                if (_SurfaceE || _SurfaceNE || _SurfaceSE)
+                {
                     Spin(true);
-                else
+                }
+                if (_SurfaceW || _SurfaceNW || _SurfaceSW)
+                {
                     Spin(false);
+                }
+                //if (_directionNearestAverage.x > 0)
+                //    Spin(true);
+                //else
+                //    Spin(false);
             }
                 
         }
@@ -405,10 +444,18 @@ public class GoopyController : MonoBehaviour
 
             if (!_brokenApart)
             {
-                if (_directionNearestAverage.x > 0)
+                if (_SurfaceE || _SurfaceNE || _SurfaceSE)
+                {
                     Spin(false);
-                else
+                }
+                if (_SurfaceW || _SurfaceNW || _SurfaceSW)
+                {
                     Spin(true);
+                }
+                //if (_directionNearestAverage.x > 0)
+                //    Spin(false);
+                //else
+                //    Spin(true);
             }
             
         }
