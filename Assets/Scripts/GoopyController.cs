@@ -7,12 +7,12 @@ public class GoopyController : MonoBehaviour
     [SerializeField] float _defaultGravity = 1;
     [SerializeField] float _hangGravity = 0.25f;
     [SerializeField] float _movementForce = 5;
-    [SerializeField] public float goopJumpForce = 500;
-    [SerializeField] public float goopShootForce = 500;
-    [SerializeField] public float goopSpringDistance = 2;
-    [SerializeField] public float goopSpringDampeningRatio = 0;
-    [SerializeField] public float goopSpringFrequency = 1;
-    [SerializeField] public float goopFriction = 1;
+    public float goopJumpForce = 500;
+    public float goopShootForce = 500;
+    public float goopSpringDistance = 2;
+    public float goopSpringDampeningRatio = 0;
+    public float goopSpringFrequency = 1;
+    public float goopFriction = 1;
     [SerializeField] GameObject centerGoop;
     [SerializeField] GameObject goopyFace;
     [SerializeField] GameObject _goopyStickyArrow;
@@ -347,6 +347,21 @@ public class GoopyController : MonoBehaviour
             goopyFace.transform.position = new Vector3(-100000, 0);
     }
 
+    void GoopyGravity(float newGravity)
+    {
+        foreach (var goop in _goops)
+            goop.GetComponent<Rigidbody2D>().gravityScale = newGravity;
+    }
+
+    void HangGravity()
+    {
+        if (_SurfaceN && !_SurfaceS)
+            GoopyGravity(_hangGravity);
+        else
+            GoopyGravity(_defaultGravity);
+
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -358,6 +373,7 @@ public class GoopyController : MonoBehaviour
         CalcCenterOfGoops();
         GoopyFaceLogic();
         NearestSurfaceLogic();
+        HangGravity();
 
         if (Input.GetKey(KeyCode.A))
         {
