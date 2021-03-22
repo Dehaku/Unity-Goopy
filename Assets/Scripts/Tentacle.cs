@@ -27,7 +27,6 @@ public class Tentacle : MonoBehaviour
             rigidbody2D.position += new Vector2(0, i*0.8f);
             BoxCollider2D boxCollider2D = _lines.Last().AddComponent<BoxCollider2D>();
             
-            _lines.Last().AddComponent<RobotJoint>();
 
 
         }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
+
 
 public class GoopyController : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class GoopyController : MonoBehaviour
     [SerializeField] GameObject centerGoop;
     [SerializeField] GameObject goopyFace;
     [SerializeField] GameObject _goopyStickyArrow;
+    [SerializeField] GameObject _tentacleGrappleProjectile;
+    public LineRenderer tentacleLine;
     [SerializeField] float _outerParachuteDrag = 1.5f;
     [SerializeField] float _innerParachuteDrag = 3f;
 
@@ -369,12 +373,112 @@ public class GoopyController : MonoBehaviour
 
     }
 
+    void TentacleGrappleShoot()
+    {
+        // Throw object from nearest goop, line render between.
+
+        // Replace with transform.right? 6 minutes in
+
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        var v2 = mousePosition - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+        var desiredAngle = Mathf.Atan2(v2.y, v2.x);
+
+        Rigidbody2D closestGoop = new Rigidbody2D();
+        float closestAngle = 10000;
+
+        foreach (var goop in _goops)
+        {
+            if (closestGoop == null)
+                closestGoop = goop;
+            var goopv2 = goop.GetComponent<Rigidbody2D>().position - new Vector2(_centerOfGoops.x, _centerOfGoops.y);
+            var goopAngle = Mathf.Atan2(goopv2.y, goopv2.x);
+
+            if (goopAngle >= desiredAngle - (3.14 / 2) && goopAngle <= desiredAngle + (3.14 / 2))
+            {
+                if (closestAngle > Math.Abs(goopAngle - desiredAngle))
+                {
+                    closestGoop = goop;
+                    closestAngle = Math.Abs(goopAngle - desiredAngle);
+                }
+            }
+        }
+
+        Vector3 goopPos = closestGoop.position;
+        Vector3 targetPos = mousePosition;
+
+        Debug.DrawLine(goopPos, targetPos);
+
+
+        Vector2 direction = targetPos - goopPos;
+        direction.Normalize();
+
+        // Make and shoot thing, then track it in Logic.
+        GameObject tentProj = Instantiate(_tentacleGrappleProjectile,goopPos,Quaternion.identity);
+
+
+        tentProj.GetComponent<TentacleGrappleProjectile>()._goopyThatFiredUs = closestGoop.gameObject;
+        tentProj.GetComponent<TentacleGrappleProjectile>()._goopyController = this;
+        tentProj.GetComponent<Rigidbody2D>().AddForce(direction * 1500);
+        
+
+        // _rigidbody2D.isKinematic = false;
+        // _rigidbody2D.AddForce(direction * _launchForce);
+
+
+    }
+
+    void TentacleGrappleBreak(bool breakAll = false)
+    {
+        // Break Oldest
+        foreach (var goop in _goops)
+        {
+            var springJoint2DCollection = goop.gameObject.GetComponents<DistanceJoint2D>();
+            foreach (var springJoint2D in springJoint2DCollection)
+            {
+                // if (springJoint2D.breakForce == stickyBreakForce)
+                {
+                    Destroy(springJoint2D);
+                }
+            }
+        }
+    }
+
+    void TentacleGrappleLogic()
+    {
+        // Wrap around objects, make new objects on each collsiion point, add to line renderer. Amp Velocity if needed? Might happen naturally.
+    }
+
+    public void TentacleProjHit(Collision2D collision, GameObject launcher)
+    {
+        DistanceJoint2D distanceJoint2D = launcher.AddComponent<DistanceJoint2D>();
+        distanceJoint2D.autoConfigureDistance = true;
+        distanceJoint2D.enableCollision = true;
+        distanceJoint2D.connectedBody = collision.collider.gameObject.GetComponent<Rigidbody2D>();
+        distanceJoint2D.connectedAnchor = collision.collider.transform.InverseTransformPoint(collision.contacts[0].point);
+        distanceJoint2D.maxDistanceOnly = true;
+        
+
+        /*
+        SpringJoint2D springJoint2D = gameObject.AddComponent<SpringJoint2D>();
+        springJoint2D.enableCollision = true;
+        springJoint2D.connectedBody = collision.collider.gameObject.GetComponent<Rigidbody2D>();
+        springJoint2D.breakForce = stickyBreakforce;
+        springJoint2D.frequency = stickyFrequency;
+        springJoint2D.dampingRatio = stickyDampening;
+        springJoint2D.connectedAnchor = collision.contacts[0].point;
+        springJoint2D.autoConfigureConnectedAnchor = true;
+        */
+    }
+
     // Update is called once per frame
     void Update()
     {
         _goops = GetComponentsInChildren<Rigidbody2D>(); // It is CRITICAL that this goes first. I have no idea why null checks don't work before this is ran once. 2021-3-13
+        
         if (_goops.Length == 1)
             _goops[0].GetComponent<Goopy>().SplitIntoMiniChildren();
+        
 
 
         CalcCenterOfGoops();
@@ -536,6 +640,15 @@ public class GoopyController : MonoBehaviour
         if (Input.GetKey(KeyCode.R))       // Automatically pull yourself together.
             _pullYourselfTogether = true;
         PullYourselfTogether();
+
+        if (Input.GetKeyDown(KeyCode.X))
+            TentacleGrappleShoot();
+        if (Input.GetKeyDown(KeyCode.C))
+            TentacleGrappleBreak();
+        if (Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftShift))
+            TentacleGrappleBreak(true); // break them all.
+        TentacleGrappleLogic();
+
 
         if (_goops.Length > 0)
         {

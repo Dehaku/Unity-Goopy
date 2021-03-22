@@ -34,12 +34,14 @@ public class Goopy : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.LeftControl))
             SplitIntoMiniChildren();
 
+        /*
         if (Input.GetKeyDown(KeyCode.M))
             SetGoopySpringFrequency(0.001f);
         if (Input.GetKeyDown(KeyCode.N))
             SetGoopySpringFrequency(1f);
         if (Input.GetKeyDown(KeyCode.X))
             UpdateGoopySpringFromSerialize();
+        */
     }
 
     void SpawnMiniChild()
@@ -107,7 +109,6 @@ public class Goopy : MonoBehaviour
         SpringJoint2D springJoint2D = gameObject.AddComponent<SpringJoint2D>();
         springJoint2D.enableCollision = true;
         springJoint2D.connectedBody = collision.collider.gameObject.GetComponent<Rigidbody2D>();
-        springJoint2D.frequency = 1f;
         springJoint2D.breakForce = stickyBreakforce;
         springJoint2D.frequency = stickyFrequency;
         springJoint2D.dampingRatio = stickyDampening;
